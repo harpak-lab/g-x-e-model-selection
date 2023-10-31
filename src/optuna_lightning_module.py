@@ -116,12 +116,13 @@ class GenomeModule(pl.LightningModule):
         self.data_path += self.hparams["dataset"]
 
         # Create example input array for the batch_size finder to work
+        #OKAY, IDK WHAT THINGS DEPEND ON GENE_SIZE EXISTING, BUT JUST MAKE GENE_SIZE = 4 EVERYWHERE****
         self.example_input_array = [[{
             "input_genome":
             torch.randn(1, self.hparams['gene_length'],
-                        self.hparams['gene_size']),
+                        self.hparams['gene_size']), #gene_size is the size of the one-hot encoding
             "contexts":
-            torch.randn(1, self.hparams['context_length']),
+            torch.randn(1, self.hparams['context_length']), # how many bits to encode the context though??***
             # "air_temp":
             # torch.randn(1, self.hparams['weather_length']),
             # "precip":
