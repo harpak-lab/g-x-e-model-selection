@@ -25,9 +25,8 @@ class FixedPositionalEmbedding(nn.Module):
     def forward(self, x):
         return self.emb[None, :x.shape[1], :].to(x.device)
 
-class MultimodalPerformer(nn.Module):
+class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO INCLUDE THE NEW PARAMETER "context_length"*********
 
-    #INCLUDE PARAMS FOR THE CONTEXT DATA???****
     def __init__(
         self,
         XE,
@@ -41,6 +40,7 @@ class MultimodalPerformer(nn.Module):
         separate_embedding,
         gene_dimension,
         gene_length,
+        context_length, #added******
     ):
         self.XE = XE
         if self.XE:
@@ -66,16 +66,16 @@ class MultimodalPerformer(nn.Module):
         if self.separate_embedding:
             print("Using separate embeddings")
             self.g_pos_embedding = nn.Parameter(
-                torch.randn(1, gene_length + 1, self.DIMENSION))
-            self.w_pos_embedding = FixedPositionalEmbedding( #******rename
-                self.DIMENSION, 200)
+                torch.randn(1, gene_length + 1, self.DIMENSION)) #why aren't we using fixed positional embedding for gene data??****
+            self.c_pos_embedding = FixedPositionalEmbedding(
+                self.DIMENSION, context_length) #last parameter here was originally 200 for some reason? changed it to context_length***
         else:
             self.pos_embedding = nn.Parameter(
-                torch.randn(1, gene_length + weather_length + 1, #********
-                            self.DIMENSION))
+                torch.randn(1, gene_length + context_length + 1, #********changed weather_length to context_length
+                            self.DIMENSION)) #why aren't we using FixedPositionalEmbedding method here??****
 
         # Linear upsampling layers
-        self.upsample_z = nn.Linear(2, self.DIMENSION, bias=False)
+        self.upsample_z = nn.Linear(1, self.DIMENSION, bias=False) #IDK WHY THE FIRST PARAMETER WAS SET TO 2 BEFORE BUT I CHANGED IT******
 
         # Create cls_token
         self.cls_token = nn.Parameter(torch.randn(1, 1, self.DIMENSION))
@@ -106,7 +106,7 @@ class MultimodalPerformer(nn.Module):
                 "generalized_attention", 0, 1)
             self.n_performer_landmarks = 0
 
-        self.performer = torch.nn.TransformerEncoder(
+        self.performer = torch.nn.TransformerEncoder( #MAYBE DOUBLE CHECK THAT OUR INPUT WILL GO THRU THIS WITHOUT ISSUE***
             TransformerPerformerEncoderLayer(
                 d_model=self.DIMENSION,
                 nystrom_attention=self.nystrom_attention,
@@ -116,7 +116,7 @@ class MultimodalPerformer(nn.Module):
                 dropout=self.dropout_rate,
                 activation='gelu',
                 nb_features=
-                300,  #Since we are combining both weather and gene data, we should strive for perfect attention
+                300,  #Since we are combining both context (changed from weather) and gene data, we should strive for perfect attention
                 generalized_attention=self.generalized_attention,
                 n_landmarks=self.n_performer_landmarks),
             num_layers=self.n_performer_layers,
@@ -128,7 +128,7 @@ class MultimodalPerformer(nn.Module):
         # If we are doing data augmentation through dropout at input
         if self.input_dropout:
             self.dropout_in_gene = nn.Dropout(self.input_dropout_rate)
-            self.dropout_in_wt = nn.Dropout(self.input_dropout_rate)
+            self.dropout_in_context = nn.Dropout(self.input_dropout_rate) #changed from dropout_in_wt***
 
         # Layer Norm
         self.norm = nn.LayerNorm(self.DIMENSION)
@@ -152,10 +152,10 @@ class MultimodalPerformer(nn.Module):
             cls_tokens = repeat(self.cls_token, "() n d -> b n d", b=b)
             x = torch.cat((cls_tokens, x), dim=1)
             x += self.g_pos_embedding[:, :(n + 1)]
-            z += self.w_pos_embedding(z) #******rename
+            z += self.c_pos_embedding(z) #******name changed from w_pos_embedding
             # Add cls token
 
-        # Concatenate weather to gene
+        # Concatenate context to gene
         x = torch.cat((x, z), 1)
 
         if not self.separate_embedding:
@@ -192,12 +192,15 @@ class MultimodalPerformer(nn.Module):
 
         # Concat to crate a single tensor
         # z = torch.cat((z1, z2), axis=1)
+        
+        z = btch["contexts"].unsqueeze(dim=1).float() #changed from weather to context****
 
         # Do dropout at input if we're doing augmentation
         if self.input_dropout:
-            z = self.dropout_in_wt(z) #********make z your context data
+            z = self.dropout_in_context(z) #Changed name****
 
         # Permute tensor to fit our model
+        # I think this should work with the way I set up the data?*****
         z = z.permute(0, 2, 1)
 
         # Upsample to correct size

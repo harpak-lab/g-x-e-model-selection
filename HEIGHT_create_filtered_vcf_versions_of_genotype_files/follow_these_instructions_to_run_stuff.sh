@@ -1,16 +1,3 @@
-#!/bin/bash
-#SBATCH --job-name=convert_bgen_to_csv
-#SBATCH -p vm-small
-#SBATCH -N 1
-#SBATCH -n 1
-#SBATCH --mem=8G
-#SBATCH -t 1:00:00
-#SBATCH --mail-user=reginay3@utexas.edu
-#SBATCH --mail-type=begin
-#SBATCH --mail-type=end
-
-#required installations: qctool and bgenix******
-
 #STOP EXECUTION WHEN THERE'S AN ERROR
 set -e  # exit when any command fails
 
@@ -38,90 +25,77 @@ err_trap() {
 # #combine the SNP IDs into the same file
 # cat SNP_IDs_each_chromosome/snp_ids_chr_*.txt > combined_snp_ids.txt
 
-# #sample 20,000 SNPs randomly (replace with top 20,000 SNPs later)
+# #sample x SNPs randomly (replace with top 20,000 SNPs later)
 # # and place it in the snps_to_use_as_NN_input.txt file
-# python sample_20000_random_SNPs.py
+# python sample_random_SNPs.py 100
 
-# Everythign that requires qctool here doesdn't work*******lol
-# create a .bgen file with the desired SNPs only
-# qctool \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr1.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr2.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr3.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr4.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr5.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr6.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr7.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr8.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr9.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr10.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr11.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr12.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr13.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr14.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr15.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr16.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr17.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr18.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr19.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr20.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr21.bgen \
-#     -s modified_sample_file.sample \
-#     -g /scratch/09217/ssmith21/ageamplification/geneticfiles/wholecohort_bychr/ukb.filtered.imp.chr22.bgen \
-#     -s modified_sample_file.sample \
-#     -incl-rsids snps_to_use_as_NN_input.txt \
-#     -og info_for_desired_NN_input_SNPs_only.bgen \
-#     -os modified_sample_file_joined.sample \
-
-# qctool \
-#     -g info_for_desired_NN_input_SNPs_only.bgen \
-#     -s modified_sample_file.sample \
-#     -ofiletype dosage \
-#     -og genotypes.csv
-
-#generate a file of sample IDs to keep -- we'll randomly select 400 sample IDs
+#generate a file of sample IDs to keep -- we'll randomly select 10 sample IDs
 # for now
 #creates a file called random_sample_ids.txt
-# python generate_sample_IDs_to_keep.py
+# python generate_sample_IDs_to_keep.py 10
 
-#we must run these files now (IN ORDER)--but we can't do it here, so do it separately
+# #delete all pre-existing filtered bgen files from other runs!
+# base_dir="bgen_files_filtered_by_people_and_variants"
+
+# #array of file patterns to check and remove
+# file_patterns=("chr_*.bgen" "chr_*.bgen.bgi" "chr_*.sample" "concatenated_filtered_bgen_files.bgen" "chr_*.log")
+
+# for pattern in "${file_patterns[@]}"; do
+#     for file in $base_dir/$pattern; do
+#         if [ -f "$file" ]; then
+#             rm "$file"
+#             echo "Removed $file."s
+#         else
+#             echo "File $file does not exist."
+#         fi
+#     done
+# done
+
+# #filter bgen files
 # ./filter_bgen_files_for_correct_people_and_variants.sh
-# ./convert_bgen_files_to_vcf.sh
 
-# merge all of the vcf files
-# replace the bgen file names with the names of your bgen files
-# vcf-concat vcf_versions_of_files/chr_1.vcf vcf_versions_of_files/chr_2.vcf vcf_versions_of_files/chr_3.vcf vcf_versions_of_files/chr_4.vcf vcf_versions_of_files/chr_5.vcf vcf_versions_of_files/chr_6.vcf vcf_versions_of_files/chr_7.vcf vcf_versions_of_files/chr_8.vcf vcf_versions_of_files/chr_9.vcf vcf_versions_of_files/chr_10.vcf vcf_versions_of_files/chr_11.vcf vcf_versions_of_files/chr_12.vcf vcf_versions_of_files/chr_13.vcf vcf_versions_of_files/chr_14.vcf vcf_versions_of_files/chr_15.vcf vcf_versions_of_files/chr_16.vcf vcf_versions_of_files/chr_17.vcf vcf_versions_of_files/chr_18.vcf vcf_versions_of_files/chr_19.vcf vcf_versions_of_files/chr_20.vcf vcf_versions_of_files/chr_21.vcf vcf_versions_of_files/chr_22.vcf | gzip -c > vcf_versions_of_files/vcf_version_all_chromosomes.vcf.gz
+# #note: after this filter, there might be no SNPs from chr 21 or another
+# #chromosome, which might cause an error!!! make sure there are no chromosomes
+# #with an error that no variants are left; if there is, then make sure that
+# #that chr_x.bgen file doesn't exist!!!!!???
 
-#unzip that file
-#gzip -d vcf_versions_of_files/vcf_version_all_chromosomes.vcf.gz
+# #concatenate the bgen files -- idk if this will work *****
+# cat-bgen -clobber -g bgen_files_filtered_by_people_and_variants/chr_*.bgen -og bgen_files_filtered_by_people_and_variants/concatenated_filtered_bgen_files.bgen
+
+# #create a sample file for concatenated_filtered_bgen_files.bgen
+# directory="bgen_files_filtered_by_people_and_variants"
+# pattern="chr_*.sample"
+
+# #output file
+# output_file="bgen_files_filtered_by_people_and_variants/sample_file.sample"
+
+# #find the first .sample file
+# for file in $directory/$pattern; do
+#     if [ -f "$file" ]; then
+#         #copy the contents of the first found file and break the loop
+#         cp "$file" "$output_file"
+#         echo "Copied contents of $file to $output_file."
+#         break
+#     fi
+# done
+
+# #convert the bgen file to vcf file
+# BGEN_FILE="bgen_files_filtered_by_people_and_variants/concatenated_filtered_bgen_files.bgen"
+# BGEN_SAMPLE="bgen_files_filtered_by_people_and_variants/sample_file.sample" 
+
+# plink2 --bgen $BGEN_FILE ref-last --sample $BGEN_SAMPLE --export vcf vcf-dosage=DS --out vcf_versions_of_files/vcf_version_all_chromosomes
+
+#DELETE THIS LINE IN THE FUTURE****************
+mv vcf_versions_of_files/vcf_version_all_chromosomes.vcf vcf_versions_of_files/vcf_version_all_chromosomes_filtered_for_missing_phenotype.vcf
 
 #check the head of the resulting vcf file in VSCode (doesn't show up correctly on command line)
-# head -n 20 vcf_versions_of_files/vcf_version_all_chromosomes.vcf.gz vcf_versions_of_files/head_of_vcf_version_all_chromosomes.vcf
+# head -n 20 vcf_versions_of_files/vcf_version_all_chromosomes.vcf > vcf_versions_of_files/head_of_vcf_version_all_chromosomes.vcf
 
 #get the individuals who don't have a missing phenotype -- might have to alter this if I'm creating a single performer to predict multiple phenotypes,
 #where some phenotypes ahve missing values and some dont!
 #can't run here
-# retrieve_non_missing_phenotype_individuals.sh
+#YOU SHOULD HAVE DONE ALL THIS EARLER WHEN YOU WERE FILTERING FOR INDIVIDUALS GIRL SJHFBVLSJFHLHSF********CHANGE ALL THIS LATER*****
+# ./retrieve_non_missing_phenotype_individuals.sh
 
 # vcftools --vcf vcf_versions_of_files/vcf_version_all_chromosomes.vcf --keep keep_ids.txt --recode --recode-INFO-all --out vcf_versions_of_files/vcf_version_all_chromosomes_filtered_for_missing_phenotype.vcf
 #idk if that flag should be 0v!!!^^^

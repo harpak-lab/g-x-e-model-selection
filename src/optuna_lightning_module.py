@@ -82,8 +82,8 @@ class GenomeModule(pl.LightningModule):
         #     self.optuna_network = self.hparams["network"]
         #     self.weather_data = self.hparams['historical_weather']
             
-        self.optuna_network = self.hparams["network"] #delete this*****
-        self.weather_data = self.hparams['historical_weather'] #*****change to context data
+        # self.optuna_network = self.hparams["network"] #delete this*****
+        # self.weather_data = self.hparams['historical_weather'] #*****change to context data
 
         # Learning rate
         if self.hparams['one_cycle'] == 1:
@@ -95,7 +95,7 @@ class GenomeModule(pl.LightningModule):
                                                     log=True)
 
         self.model, self.hyperparams, self.ntw = suggest_network(
-            suggester_trial, self.hparams, self.optuna_network,
+            suggester_trial, self.hparams,
             self.batch_size, self.optuna_optimizer, self.lr,
             self.optuna_momentum, self.optuna_weight_decay)
 
@@ -144,9 +144,10 @@ class GenomeModule(pl.LightningModule):
         if self.hparams.dropout_input:
             self.trial.set_user_attr("dropout_input_rate",
                                      self.hparams.dropout_input_rate)
-        self.trial.set_user_attr("git_commit_hash", get_git_revision_hash())
+        # self.trial.set_user_attr("git_commit_hash", get_git_revision_hash())
 
         # Print the data path we're using
+        print("DATA PATH::::::::::::;")
         print(self.data_path)
         dataset = pxt.TorchDataset(self.data_path)
 

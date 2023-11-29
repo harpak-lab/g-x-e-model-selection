@@ -4,13 +4,17 @@
 import optuna
 
 def prepare_study(ttargs):
-    if ttargs.historical_weather == 2:
-        h_search_study_name = 'raw_weather_' #remove this?? idk what this is ****
-        study_name = 'raw_weather_'
-    else:
-        h_search_study_name = ''
-        study_name = ''
+    # if ttargs.historical_weather == 2:
+    #     h_search_study_name = 'raw_weather_' #remove this?? idk what this is ****
+    #     study_name = 'raw_weather_'
+    # else:
+    #     h_search_study_name = ''
+    #     study_name = ''
 
+    #added below two lines*****
+    h_search_study_name = ''
+    study_name = ''
+        
     if ttargs.dropout_input == 1: #should I be leaving this in?? I'm kinda confushed why this is a part of the if else block *****
         h_search_study_name += 'augmented_'
         study_name += 'augmented_'
@@ -38,11 +42,11 @@ def prepare_study(ttargs):
     #         study_name += "performer_"
     #     h_search_study_name += "historical_transformer_hyperparameter_search_large"
     #     study_name += "historical_transformer_"
-    elif ttargs.network == 5:
-        h_search_study_name += "historical_pureTransformer_hyperparameter_search_large"
-        if ttargs.separate_embedding == 1:
-            study_name += "separate_embedding_"
-        study_name += "historical_pureTransformer_"
+    # elif ttargs.network == 5: #I WANT TO DELETE THIS BUT WHY IS IT IN AN ELIF CONNECTED TO THE DROPOUT_INPUT THING*****
+    #     h_search_study_name += "historical_pureTransformer_hyperparameter_search_large"
+    #     if ttargs.separate_embedding == 1:
+    #         study_name += "separate_embedding_"
+    #     study_name += "historical_pureTransformer_"
 
     study_name += "crossvalidation"
 

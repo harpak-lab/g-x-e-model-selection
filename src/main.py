@@ -64,22 +64,20 @@ if __name__ == "__main__":
         default=0.2,
         help="fraction of data used for validation",
     )
-    parser.add_argument(
-        "--standardized_weather_data",
-        type=int,
-        default=2,
-        help=
-        "whether to standardize, zeroone or leave as is the weather data, default = zoeroone",
-    )
+    #include an argument for standardizing the context data!!****
+    # parser.add_argument(
+    #     "--standardized_weather_data",
+    #     type=int,
+    #     default=2,
+    #     help=
+    #     "whether to standardize, zeroone or leave as is the weather data, default = zoeroone",
+    # )
     parser.add_argument(
         "--standardize_genome",
         type=int,
         default=1,
         help="whether to standardize dataset genome, default = True",
     )
-
-    #ADD ARGUMENTS FOR CONTEXT DATA????*****
-
     parser.add_argument(
         "--cross_entropy",
         type=int,
@@ -106,20 +104,21 @@ if __name__ == "__main__":
         default=100,
         help="How many trials to use to for exploration, default = 100",
     )
+    
+    #******what?
     parser.add_argument(
         "--shuffle_dataset",
         type=int,
         default=1,
         help="whether to shuffle dataset or not",
     )
-
-    #CHANGE WEATHER DATA TO CONTEXT DATA?******
+    
     parser.add_argument(
         "--separate_embedding",
         type=int,
         default=0,
         help=
-        "whether to use separate positional encodings for gene and weather data , default = 0 = False",
+        "whether to use separate positional encodings for gene and context data , default = 0 = False",
     )
     parser.add_argument(
         "--batch_size",
@@ -145,14 +144,15 @@ if __name__ == "__main__":
         default=13321,
         help="Size of gene we're using. Default = 13321, alt = 10679",
     )
-
-    #INCLUDE AND ARGUMENT FOR THE LENGTH OF THE CONTEXT DATA INSTEAD???*****
-    # parser.add_argument(
-    #     "--weather_length",
-    #     type=int,
-    #     default=123,
-    #     help="Size of gene we're using. Default = 200",
-    # )
+    
+    #changed weather_length to context_length*****
+    parser.add_argument(
+        "--context_length",
+        type=int,
+        default=22,
+        help="Size of context we're using. Default = 22",
+    )
+    
     parser.add_argument(
         "--gene_size",
         type=int,
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         type=int,
         default=0,
         help=
-        "Wether to run on slurm or local single machine, default = 0 = local machine",
+        "Whether to run on slurm or local single machine, default = 0 = local machine",
     )
     parser.add_argument(
         "--num_nodes",

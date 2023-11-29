@@ -23,7 +23,7 @@ class MetricsCallback(Callback):
         self.metrics = []
 
     def on_validation_end(self, trainer, pl_module):
-        self.metrics.append(trainer.callback_metrics)
+        self.metrics.append(trainer.callback_metrics) #is this supposed to be metrics_callback (see line 106)???****
 
 
 def run_trials(

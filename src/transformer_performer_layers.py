@@ -10,7 +10,10 @@ from typing import Optional
 import torch.functional as F
 import torch.nn as nn
 
-#NOT SURE WHY WE'RE USING A DECODER LAYER HERE BC THE PAPER SAYS THAT THEY'RE NOT USING A DECODER LAYER*****
+#I'm using a later version of pytorch than the original authors bc anaconda won't install
+#the older version despite creating an environment from their .yml file, so maybe change
+# some things around??
+#I HOPE I DIDN"T MISS ANYTHING *******
 
 class PreNorm(nn.Module):
     def __init__(self, dim, fn):
@@ -143,7 +146,7 @@ class TransformerPerformerDecoderLayer(nn.Module):
         super(TransformerPerformerDecoderLayer, self).__init__()
         self.attn = PerformerAttention(
             dim=d_model, heads=nhead, causal=False, generalized_attention=generalized_attention)
-        self.multihead_attn = PerformerAttention(
+        self.attn = PerformerAttention(
             dim=d_model, heads=nhead, causal=False, generalized_attention=generalized_attention)
 
         # Implementation of Feedforward model
