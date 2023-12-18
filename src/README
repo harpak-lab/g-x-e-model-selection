@@ -1,0 +1,83 @@
+# Performer Model for Phenotype Prediction
+Regina Ye
+
+*****means come back here Regina
+
+Instructions for scripts.
+# Gene-Environment Interaction Analysis with Performer Neural Networks
+
+This project is an implementation of performer neural networks to analyze Gene-Environment (GxE) interactions and their impact on phenotypic predictions. It's based on the code developed by Måløy et al., available at [https://github.com/haakom/pay-attention-to-genomic-selection](https://github.com/haakom/pay-attention-to-genomic-selection).
+
+## Features
+
+- 10-fold Cross-Validation
+- Hyperparameter optimization with Optuna
+- Support for SLURM-based cluster optimization
+- Customizable settings for dataset handling and model training
+
+## Installation
+
+To install the necessary components for this project, ensure that you have Anaconda installed. To clone the repository and set up the environment:
+
+1. Clone the repository:
+git clone https://github.com/harpak-lab/g-x-e-model-selection.git
+
+2. Navigate to the source directory:
+cd g-x-e-model-selection/src
+
+3. Create the Anaconda environment from the `environment.yml` file:
+conda env create -f environment.yml
+
+After creating the environment, activate it using `conda activate GxE_predict_phenotypes`
+
+## Phenotype files
+Phenotype files are obtained from the UK Biobank and renamed pheno_(phenotype code).txt. A list of phenotype codes and formatted names for labels are provided in pheno_names.txt. A list of phenotype codes and UKBB data fields are provided in pheno_ids.txt******
+
+## Genotype files
+Genotype files are obtained from the UK Biobank******
+
+## Context (Environment) files
+Context files are obtained from the UK Biobank******
+
+## Data Preprocessing
+
+Before running the main model, it's essential to preprocess your data using the provided script.
+
+### Steps for Data Preprocessing
+
+****** make sure environment.yml file is updated with the packages you need to preprocess data oops
+
+1. **Locate the Preprocessing Script**: Find `preprocess_data.py` (CREATE THIS FILE******) in the (rename directories and put here).
+
+2. **Run the Preprocessing Script**: Execute the script with the necessary arguments. For example:
+
+python preprocess_data.py <put arguments here ********>
+
+Replace <arguments******> with the actual paths to your input data and where you want the preprocessed data to be saved.
+
+## Usage
+
+To run the project:
+
+python main.py <additional flags>
+
+### Key Arguments
+
+- `--hyper_search`: Set to 1 for hyperparameter search.
+- `--total_num_trials`: Number of trials for the study.
+- `--database_name`: Path to the hyperparameter search database.
+- `--datasets_dir`: Directory where datasets are stored.
+- `--dataset`: Name of the dataset to use.
+- `--inverse_transform`: Path to the inverse transform of the target data.
+- `--standardize_genome`: Set to 1 to standardize the genome data.
+- `--batch_size`: Batch size for training.
+- `--num_epochs`: Number of epochs for training.
+- More arguments can be configured in the script.
+
+## Credits
+
+This project is based on the work of Måløy et al. Please refer to their repository for the original implementation.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

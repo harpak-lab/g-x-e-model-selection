@@ -25,65 +25,65 @@ err_trap() {
 # #combine the SNP IDs into the same file
 # cat SNP_IDs_each_chromosome/snp_ids_chr_*.txt > combined_snp_ids.txt
 
-# #sample x SNPs randomly (replace with top 20,000 SNPs later)
-# # and place it in the snps_to_use_as_NN_input.txt file
-# python sample_random_SNPs.py 100
+#sample x SNPs randomly (replace with top 20,000 SNPs later)
+# and place it in the snps_to_use_as_NN_input.txt file
+python sample_random_SNPs.py 3000
 
-#generate a file of sample IDs to keep -- we'll randomly select 10 sample IDs
+# generate a file of sample IDs to keep -- we'll randomly select 10 sample IDs
 # for now
-#creates a file called random_sample_ids.txt
-# python generate_sample_IDs_to_keep.py 10
+# creates a file called random_sample_ids.txt
+python generate_sample_IDs_to_keep.py 300
 
-# #delete all pre-existing filtered bgen files from other runs!
-# base_dir="bgen_files_filtered_by_people_and_variants"
+#delete all pre-existing filtered bgen files from other runs!
+base_dir="bgen_files_filtered_by_people_and_variants"
 
-# #array of file patterns to check and remove
-# file_patterns=("chr_*.bgen" "chr_*.bgen.bgi" "chr_*.sample" "concatenated_filtered_bgen_files.bgen" "chr_*.log")
+#array of file patterns to check and remove
+file_patterns=("chr_*.bgen" "chr_*.bgen.bgi" "chr_*.sample" "concatenated_filtered_bgen_files.bgen" "chr_*.log")
 
-# for pattern in "${file_patterns[@]}"; do
-#     for file in $base_dir/$pattern; do
-#         if [ -f "$file" ]; then
-#             rm "$file"
-#             echo "Removed $file."s
-#         else
-#             echo "File $file does not exist."
-#         fi
-#     done
-# done
+for pattern in "${file_patterns[@]}"; do
+    for file in $base_dir/$pattern; do
+        if [ -f "$file" ]; then
+            rm "$file"
+            echo "Removed $file."s
+        else
+            echo "File $file does not exist."
+        fi
+    done
+done
 
-# #filter bgen files
-# ./filter_bgen_files_for_correct_people_and_variants.sh
+#filter bgen files
+./filter_bgen_files_for_correct_people_and_variants.sh
 
-# #note: after this filter, there might be no SNPs from chr 21 or another
-# #chromosome, which might cause an error!!! make sure there are no chromosomes
-# #with an error that no variants are left; if there is, then make sure that
-# #that chr_x.bgen file doesn't exist!!!!!???
+#note: after this filter, there might be no SNPs from chr 21 or another
+#chromosome, which might cause an error!!! make sure there are no chromosomes
+#with an error that no variants are left; if there is, then make sure that
+#that chr_x.bgen file doesn't exist!!!!!???
 
-# #concatenate the bgen files -- idk if this will work *****
-# cat-bgen -clobber -g bgen_files_filtered_by_people_and_variants/chr_*.bgen -og bgen_files_filtered_by_people_and_variants/concatenated_filtered_bgen_files.bgen
+#concatenate the bgen files
+cat-bgen -clobber -g bgen_files_filtered_by_people_and_variants/chr_*.bgen -og bgen_files_filtered_by_people_and_variants/concatenated_filtered_bgen_files.bgen
 
-# #create a sample file for concatenated_filtered_bgen_files.bgen
-# directory="bgen_files_filtered_by_people_and_variants"
-# pattern="chr_*.sample"
+#create a sample file for concatenated_filtered_bgen_files.bgen
+directory="bgen_files_filtered_by_people_and_variants"
+pattern="chr_*.sample"
 
-# #output file
-# output_file="bgen_files_filtered_by_people_and_variants/sample_file.sample"
+#output file
+output_file="bgen_files_filtered_by_people_and_variants/sample_file.sample"
 
-# #find the first .sample file
-# for file in $directory/$pattern; do
-#     if [ -f "$file" ]; then
-#         #copy the contents of the first found file and break the loop
-#         cp "$file" "$output_file"
-#         echo "Copied contents of $file to $output_file."
-#         break
-#     fi
-# done
+#find the first .sample file
+for file in $directory/$pattern; do
+    if [ -f "$file" ]; then
+        #copy the contents of the first found file and break the loop
+        cp "$file" "$output_file"
+        echo "Copied contents of $file to $output_file."
+        break
+    fi
+done
 
-# #convert the bgen file to vcf file
-# BGEN_FILE="bgen_files_filtered_by_people_and_variants/concatenated_filtered_bgen_files.bgen"
-# BGEN_SAMPLE="bgen_files_filtered_by_people_and_variants/sample_file.sample" 
+#convert the bgen file to vcf file
+BGEN_FILE="bgen_files_filtered_by_people_and_variants/concatenated_filtered_bgen_files.bgen"
+BGEN_SAMPLE="bgen_files_filtered_by_people_and_variants/sample_file.sample" 
 
-# plink2 --bgen $BGEN_FILE ref-last --sample $BGEN_SAMPLE --export vcf vcf-dosage=DS --out vcf_versions_of_files/vcf_version_all_chromosomes
+plink2 --bgen $BGEN_FILE ref-last --sample $BGEN_SAMPLE --export vcf vcf-dosage=DS --out vcf_versions_of_files/vcf_version_all_chromosomes
 
 #DELETE THIS LINE IN THE FUTURE****************
 mv vcf_versions_of_files/vcf_version_all_chromosomes.vcf vcf_versions_of_files/vcf_version_all_chromosomes_filtered_for_missing_phenotype.vcf
