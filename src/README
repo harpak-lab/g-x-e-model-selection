@@ -2,6 +2,7 @@
 Regina Ye
 
 *****means come back here Regina
+*****move all pheno, covar, and genotype files into dataset or at least change code to take in paths for these files
 
 Instructions for scripts.
 # Gene-Environment Interaction Analysis with Performer Neural Networks
@@ -31,10 +32,10 @@ conda env create -f environment.yml
 After creating the environment, activate it using `conda activate GxE_predict_phenotypes`
 
 ## Phenotype files
-Phenotype files are obtained from the UK Biobank and renamed pheno_(phenotype code).txt. A list of phenotype codes and formatted names for labels are provided in pheno_names.txt. A list of phenotype codes and UKBB data fields are provided in pheno_ids.txt******
+Phenotype files are obtained from the UK Biobank and renamed dataset/pheno_(phenotype code).txt.*******
 
 ## Genotype files
-Genotype files are obtained from the UK Biobank******
+In the $dataset directory, download 1000G phase 3 GrCh 37 genotype data ([all_phase3 bfiles](https://www.cog-genomics.org/plink/2.0/resources#phase3_1kg)). Convert files to bgen files??? using command???*****
 
 ## Context (Environment) files
 Context files are obtained from the UK Biobank******
@@ -46,6 +47,7 @@ Before running the main model, it's essential to preprocess your data using the 
 ### Steps for Data Preprocessing
 
 ****** make sure environment.yml file is updated with the packages you need to preprocess data oops
+****** also make sure you're using bgen files only and no bfiles files
 
 1. **Locate the Preprocessing Script**: Find `preprocess_data.py` (CREATE THIS FILE******) in the (rename directories and put here).
 

@@ -15,15 +15,15 @@ err_trap() {
 # #concurrently (using slurm array) extract the SNP IDs into different files for each chromosome
 # # modify_sample_file_to_allow_qctool_use_bgen_files.sh
 # # OK I GIVE ON TRYING TO GET SNP IDs FROM BGEN FILES -- WILL GET THEM FROM BFILES INSTEAD:
-# for i in {1..22}; do
-#     awk '{print $2}' /scratch/09528/haskin/wholecohort_bychr/ukb.filtered.imp.chr${i}.bim > SNP_IDs_each_chromosome/snp_ids_chr_${i}.txt
-# done
+for i in {1..22}; do
+    awk '{print $2}' /scratch/09528/haskin/wholecohort_bychr/ukb.filtered.imp.chr${i}.bim > SNP_IDs_each_chromosome/snp_ids_chr_${i}.txt
+done
 
-# #make sure there aren't any duplicate RSIDs across different chromosomes: ********
-# cat SNP_IDs_each_chromosome/snp_ids_chr_*.txt | sort | uniq -d > are_there_duplicate_RSIDs.txt
+#make sure there aren't any duplicate RSIDs across different chromosomes: ********
+cat SNP_IDs_each_chromosome/snp_ids_chr_*.txt | sort | uniq -d > are_there_duplicate_RSIDs.txt
 
-# #combine the SNP IDs into the same file
-# cat SNP_IDs_each_chromosome/snp_ids_chr_*.txt > combined_snp_ids.txt
+#combine the SNP IDs into the same file
+cat SNP_IDs_each_chromosome/snp_ids_chr_*.txt > combined_snp_ids.txt
 
 #sample x SNPs randomly (replace with top 20,000 SNPs later)
 # and place it in the snps_to_use_as_NN_input.txt file
