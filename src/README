@@ -3,6 +3,7 @@ Regina Ye
 
 *****means come back here Regina
 *****move all pheno, covar, and genotype files into dataset or at least change code to take in paths for these files
+******create an option for the user to specify the phenotype name for the create_lmdb_files_each_phenotype.py file 
 
 Instructions for scripts.
 # Gene-Environment Interaction Analysis with Performer Neural Networks
@@ -47,14 +48,12 @@ Before running the main model, it's essential to preprocess your data using the 
 ### Steps for Data Preprocessing
 
 ****** make sure environment.yml file is updated with the packages you need to preprocess data oops
-****** also make sure you're using bgen files only and no bfiles
-****** preprocess_data.py should string togther QC.sh, follow_these_instructions...(rename this), and create_NN_dataset
 
-1. **Locate the Preprocessing Script**: Find `preprocess_data.py` (CREATE THIS FILE******) in the (rename directories and put here).
+1. **Locate the Preprocessing Script**: Find `preprocess_data.sh` in the create_filtered_vcf_version_of_genotype_file directory.
 
 2. **Run the Preprocessing Script**: Execute the script with the necessary arguments. For example:
 
-python preprocess_data.py <put arguments here ********>
+./preprocess_data.py <put arguments here ********>
 
 Replace <arguments******> with the actual paths to your input data and where you want the preprocessed data to be saved.
 
@@ -76,6 +75,22 @@ python main.py <additional flags>
 - `--batch_size`: Batch size for training.
 - `--num_epochs`: Number of epochs for training.
 - More arguments can be configured in the script.
+
+For example, in the src folder, you can run:
+
+python main.py \
+        --total_num_trials 3 \
+        --database_name ../hyperparameter_search_database.sqlite \
+        --datasets_dir ../dataset/ \
+        --dataset genome_HDL_phenotype_context_data.lmdb \
+        --inverse_transform HDL_phenotype_scaler.joblib \
+        --num_hparams_explor 10 \
+        --batch_size 50 \
+        --gene_length 3000 \
+        --gene_size 4 \
+        --num_nodes 3 \
+        --num_epochs 10 \
+        --gpus 0 \
 
 ## Credits
 
