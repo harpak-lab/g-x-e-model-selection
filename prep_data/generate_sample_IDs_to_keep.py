@@ -1,5 +1,9 @@
 import random
 import sys
+import os
+
+imputed_bgen_files_dir = os.getenv('IMPUTE_DIR')
+pheno_dir = os.getenv('PHENO_DIR')
 
 # default number of people to select if no argument is provided
 default_num_people = 400
@@ -15,14 +19,14 @@ else:
     num_people_to_randomly_select = default_num_people
 
 # read the Withdrawal List (assuming FID and IID are identical)
-with open('/stor/work/Harpak/regina_y/GWASxML_algo/withdrawn_from_study_individuals.csv', 'r') as wd_file:
+with open('{}/withdrawn_ids.txt'.format(pheno_dir), 'r') as wd_file:
     # skip the header
     next(wd_file)
     # create a set of withdrawn IDs
     withdrawn_ids = {line.split()[1] for line in wd_file}
 
 # filter out withdrawn individuals
-with open('/stor/work/Harpak/regina_y/GWASxML_algo/ukb.filtered.imp.chr1.sample', 'r') as f:
+with open('{}/ukb61666_imp_chr1_v3_s487280.sample'.format(imputed_bgen_files_dir), 'r') as f:
     lines = f.readlines()
 
 #extract the header

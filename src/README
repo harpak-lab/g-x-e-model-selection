@@ -33,13 +33,13 @@ conda env create -f environment.yml
 After creating the environment, activate it using `conda activate GxE_predict_phenotypes`
 
 ## Phenotype files
-Phenotype files are obtained from the UK Biobank and renamed dataset/pheno_(phenotype code).txt.*******
+Phenotype files are obtained from the UK Biobank and renamed pheno_(phenotype code).txt.*******
 
 ## Genotype files
 Imputed data for the UK Biobank was downloaded using the ([ukbgene utility](https://biobank.ctsu.ox.ac.uk/crystal/refer.cgi?id=664)) in the Oxford bgen format.
 
 ## Context (Environment) files
-Context files are obtained from the UK Biobank******
+Context files are obtained from the UK Biobank and renamed wc.covariates.txt******
 
 ## Data Preprocessing
 
@@ -49,13 +49,18 @@ Before running the main model, it's essential to preprocess your data using the 
 
 ****** make sure environment.yml file is updated with the packages you need to preprocess data oops
 
-1. **Locate the Preprocessing Script**: Find `preprocess_data.sh` in the create_filtered_vcf_version_of_genotype_file directory.
+1. **Locate the Preprocessing Script and Configuration File**: Find `preprocess_data.sh` and `config.sh` in the prep_data directory.
 
-2. **Run the Preprocessing Script**: Execute the script with the necessary arguments. For example:
+3. **Provide File Paths in the `config.sh` File**: Provide the paths to your data files in the config.sh file. Ensure that your .bgen files have the naming scheme ukb_imp_chr${CHR}_v3.bgen and the .sample
+files have the naming scheme ukb61666_imp_chr${CHR}_v3_s487280.sample.
 
-./preprocess_data.py <put arguments here ********>
+2. **Run the Preprocessing Script**: 
 
-Replace <arguments******> with the actual paths to your input data and where you want the preprocessed data to be saved.
+Execute the preprocessing script:
+
+`./preprocess_data.py`
+
+This script may require several hours to finish executing.
 
 ## Usage
 
