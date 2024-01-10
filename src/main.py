@@ -225,13 +225,7 @@ if __name__ == "__main__":
     )
 
     ############################## Model args #################################
-    # parser.add_argument(
-    #     "--network",
-    #     type=int,
-    #     default=1,
-    #     help=
-    #     "whether to use a Vanilla CNN: 1, ResNet: 2, Performer: 3, Historical Performer: 4, Multimodal Performer: 5 , default = Vanilla CNN: 1",
-    # )
+
     parser.add_argument(
         "--nystrom_attention",
         type=int,

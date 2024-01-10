@@ -25,7 +25,7 @@ class FixedPositionalEmbedding(nn.Module):
     def forward(self, x):
         return self.emb[None, :x.shape[1], :].to(x.device)
 
-class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO INCLUDE THE NEW PARAMETER "context_length"*********
+class MultimodalPerformer(nn.Module):
 
     def __init__(
         self,
@@ -40,7 +40,7 @@ class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO
         separate_embedding,
         gene_dimension,
         gene_length,
-        context_length, #added******
+        context_length, #added
     ):
         self.XE = XE
         if self.XE:
@@ -71,11 +71,11 @@ class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO
                 self.DIMENSION, context_length) #last parameter here was originally 200 for some reason? changed it to context_length***
         else:
             self.pos_embedding = nn.Parameter(
-                torch.randn(1, gene_length + context_length + 1, #********changed weather_length to context_length
+                torch.randn(1, gene_length + context_length + 1,
                             self.DIMENSION)) #why aren't we using FixedPositionalEmbedding method here??****
 
         # Linear upsampling layers
-        self.upsample_z = nn.Linear(1, self.DIMENSION, bias=False) #IDK WHY THE FIRST PARAMETER WAS SET TO 2 BEFORE BUT I CHANGED IT******
+        self.upsample_z = nn.Linear(1, self.DIMENSION, bias=False) #idk why the first parameter was set to 2 before but I changed it******
 
         # Create cls_token
         self.cls_token = nn.Parameter(torch.randn(1, 1, self.DIMENSION))
@@ -106,7 +106,7 @@ class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO
                 "generalized_attention", 0, 1)
             self.n_performer_landmarks = 0
 
-        self.performer = torch.nn.TransformerEncoder( #MAYBE DOUBLE CHECK THAT OUR INPUT WILL GO THRU THIS WITHOUT ISSUE***
+        self.performer = torch.nn.TransformerEncoder(
             TransformerPerformerEncoderLayer(
                 d_model=self.DIMENSION,
                 nystrom_attention=self.nystrom_attention,
@@ -128,7 +128,7 @@ class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO
         # If we are doing data augmentation through dropout at input
         if self.input_dropout:
             self.dropout_in_gene = nn.Dropout(self.input_dropout_rate)
-            self.dropout_in_context = nn.Dropout(self.input_dropout_rate) #changed from dropout_in_wt***
+            self.dropout_in_context = nn.Dropout(self.input_dropout_rate)
 
         # Layer Norm
         self.norm = nn.LayerNorm(self.DIMENSION)
@@ -152,7 +152,7 @@ class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO
             cls_tokens = repeat(self.cls_token, "() n d -> b n d", b=b)
             x = torch.cat((cls_tokens, x), dim=1)
             x += self.g_pos_embedding[:, :(n + 1)]
-            z += self.c_pos_embedding(z) #******name changed from w_pos_embedding
+            z += self.c_pos_embedding(z)
             # Add cls token
 
         # Concatenate context to gene
@@ -185,22 +185,14 @@ class MultimodalPerformer(nn.Module): #MAKE SURE YOU CHANGE ANY CALLS TO INIT TO
         # Do dropout at input if we're doing augmentation
         if self.input_dropout:
             x = self.dropout_in_gene(x)
-
-        # Extract weather data
-        # z1 = btch["air_temp"].unsqueeze(dim=1).float()
-        # z2 = btch["precip"].unsqueeze(dim=1).float()
-
-        # Concat to crate a single tensor
-        # z = torch.cat((z1, z2), axis=1)
         
-        z = btch["contexts"].unsqueeze(dim=1).float() #changed from weather to context****
+        z = btch["contexts"].unsqueeze(dim=1).float()
 
         # Do dropout at input if we're doing augmentation
         if self.input_dropout:
-            z = self.dropout_in_context(z) #Changed name****
+            z = self.dropout_in_context(z)
 
         # Permute tensor to fit our model
-        # I think this should work with the way I set up the data?*****
         z = z.permute(0, 2, 1)
 
         # Upsample to correct size

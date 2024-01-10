@@ -7,7 +7,7 @@ from optuna.importance import FanovaImportanceEvaluator, get_param_importances
 from transformer_network import MultimodalPerformer
 
 
-def suggest_network(suggester_trial, hparams, network_type: int,
+def suggest_network(suggester_trial, hparams,
                     batch_size: int, optimizer: str, learning_rate: float,
                     momentum: float, weight_decay: float):
     """
@@ -34,7 +34,8 @@ def suggest_network(suggester_trial, hparams, network_type: int,
         optuna_n_performer_layers,
         hparams["separate_embedding"],
         hparams["gene_size"],
-        hparams["gene_length"], #create hparam for context data?******
+        hparams["gene_length"],
+        hparams["context_length"] #added******
     )
     model_hparams = model.get_optuna_params()
     hyperparams = {
@@ -45,14 +46,14 @@ def suggest_network(suggester_trial, hparams, network_type: int,
         'momentum': momentum,
         'weight_decay': weight_decay,
         'n_linear_layers': 0.0,
-        'n_conv_layers': 0.0,
+        # 'n_conv_layers': 0.0,
         'n_performer_layers': optuna_n_performer_layers,
         'n_heads': model_hparams["n_performer_heads"],
         'head_dim': model_hparams["performer_head_dim"],
         'ff_size': model_hparams["performer_ff_size"],
         'gen_attn': model_hparams["performer_generalized_attention"],
         'nystrom_attention': hparams["nystrom_attention"],
-        # 'n_weather_performer_layers': 0.0,  #create hparam for context data?******
+        # 'n_weather_performer_layers': 0.0,
         # 'weather_data': 1.0
     }
 

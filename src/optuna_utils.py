@@ -4,12 +4,6 @@
 import optuna
 
 def prepare_study(ttargs):
-    # if ttargs.historical_weather == 2:
-    #     h_search_study_name = 'raw_weather_' #remove this?? idk what this is ****
-    #     study_name = 'raw_weather_'
-    # else:
-    #     h_search_study_name = ''
-    #     study_name = ''
 
     #added below two lines*****
     h_search_study_name = ''

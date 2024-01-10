@@ -10,10 +10,7 @@ from typing import Optional
 import torch.functional as F
 import torch.nn as nn
 
-#I'm using a later version of pytorch than the original authors bc anaconda won't install
-#the older version despite creating an environment from their .yml file, so maybe change
-# some things around??
-#I HOPE I DIDN"T MISS ANYTHING *******
+#double check I didn't miss anything *******
 
 class PreNorm(nn.Module):
     def __init__(self, dim, fn):

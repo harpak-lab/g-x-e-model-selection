@@ -81,6 +81,7 @@ python main.py <additional flags>
 
 For example, in the src folder, you can run:
 
+```
 python main.py \
         --total_num_trials 3 \
         --database_name ../hyperparameter_search_database.sqlite \
@@ -94,6 +95,7 @@ python main.py \
         --num_nodes 3 \
         --num_epochs 10 \
         --gpus 0 \
+```
 
 ## Credits
 

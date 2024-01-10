@@ -3,8 +3,6 @@
 
 from test_tube.hpc import SlurmCluster
 
-#Idk if I need this file???****
-
 def optimize_on_cluster(
     hyperparams,
     slurm_log_dir: str = "Slurm",
@@ -30,11 +28,11 @@ def optimize_on_cluster(
 
     # set slurm partition and account
     cluster.add_slurm_cmd(cmd="partition",
-                          value="your_partition_here",
+                          value="normal", #maybe change later??***
                           comment="what partition to use")
 
     cluster.add_slurm_cmd(cmd="account",
-                          value="your_account_here",
+                          value="haskin",
                           comment="what account to use")
 
     # we'll request 10GB of memory per node

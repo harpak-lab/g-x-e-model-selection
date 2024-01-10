@@ -15,16 +15,17 @@ from optuna_lightning_module import GenomeModule
 from optuna_utils import prepare_study
 
 
-class MetricsCallback(Callback):
+class MetricsCallback(Callback): #Edited method to make it easier to get val_loss of best trial
     """PyTorch Lightning metric callback."""
 
     def __init__(self):
         super().__init__()
-        self.metrics = []
+        self.val_losses = []
 
     def on_validation_end(self, trainer, pl_module):
-        self.metrics.append(trainer.callback_metrics) #is this supposed to be metrics_callback (see line 106)???****
-
+        val_loss = trainer.callback_metrics.get('val_loss')
+        if val_loss is not None:
+            self.val_losses.append(val_loss.item())
 
 def run_trials(
     ttargs,
@@ -42,7 +43,17 @@ def run_trials(
         frozen_trial=h_search_frozen_trial,
     ),
                    n_trials=ttargs.total_num_trials)
+    
+    #save the val losses for the best trial - added
+    best_trial = study.best_trial
 
+    best_metrics_callback = best_trial.user_attrs['MetricsCallback']
+    best_val_losses = best_metrics_callback.val_losses
+
+    #save the validation losses to a text file
+    with open("best_trial_validation_losses.txt", "w") as f:
+        for loss in best_val_losses:
+            f.write(f"{loss}\n")
 
 def objective(
     trial,
@@ -92,7 +103,7 @@ def objective(
 
         # And then initializing a new one for the lr-finder to work
         trainer = pl.Trainer(
-            logger=tb_logger,
+            # logger=tb_logger, ADD THIS IN LATER*******
             deterministic=True,
             accumulate_grad_batches=1,
             checkpoint_callback=checkpoint_callback,
@@ -119,7 +130,8 @@ def objective(
         trainer = pl.Trainer(
             deterministic=True,
             accumulate_grad_batches=1,
-            logger=tb_logger,
+            logger=False,
+            # logger=tb_logger, ADD THIS IN LATER*******
             checkpoint_callback=checkpoint_callback,
             limit_val_batches=1.0,
             # checkpoint_callback=checkpoint_callback,
@@ -147,5 +159,7 @@ def objective(
     if not hyperparser.hyper_search:
         # Pytorch lightning loads the best weights for us
         trainer.test(ckpt_path='best')
+        
+    trial.set_user_attr("val_losses", metrics_callback.val_losses) #added
 
-    return metrics_callback.metrics[-1]["val_loss"].item()
+    return metrics_callback.val_losses[-1] #edited
