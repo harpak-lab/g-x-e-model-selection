@@ -70,21 +70,6 @@ class GenomeModule(pl.LightningModule):
         else:
             self.optuna_momentum = 0.0
 
-        # If network == -3, let optuna choose the network
-        # if self.hparams["network"] == -3: *********
-        #     self.optuna_network = suggester_trial.suggest_categorical(
-        #         "network", [1, 2, 3, 4])
-        #     if self.optuna_network > 2:
-        #         self.weather_data = suggester_trial.suggest_categorical(
-        #             "historical_weather", [1, 2])
-        # Otherwise use the provided network
-        # else:
-        #     self.optuna_network = self.hparams["network"]
-        #     self.weather_data = self.hparams['historical_weather']
-            
-        # self.optuna_network = self.hparams["network"] #delete this*****
-        # self.weather_data = self.hparams['historical_weather'] #*****change to context data
-
         # Learning rate
         if self.hparams['one_cycle'] == 1:
             self.lr = self.hparams['lr']
@@ -123,10 +108,6 @@ class GenomeModule(pl.LightningModule):
                         self.hparams['gene_size']), #gene_size is the size of the one-hot encoding
             "contexts":
             torch.randn(1, self.hparams['context_length']), # how many bits to encode the context though??***
-            # "air_temp":
-            # torch.randn(1, self.hparams['weather_length']),
-            # "precip":
-            # torch.randn(1, self.hparams['weather_length']),
         }]]
 
         # Enter a set of user attrs in the optuna database for ease of use
@@ -405,7 +386,7 @@ class GenomeModule(pl.LightningModule):
     def train_dataloader(self):
         use_cuda = True and torch.cuda.is_available()
         kwargs = {
-            "num_workers": 4, #maybe increase this number??? idk******
+            "num_workers": 4, #maybe increase this number?******
             "pin_memory": True
         } if use_cuda else {
             "num_workers": 4
