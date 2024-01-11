@@ -33,11 +33,12 @@ if [ "$RANDOMLY_SAMPLE_SNPS" == "true" ]; then
     python sample_random_SNPs.py 100
 fi
 
-#JUST REALIZED THAT GWAS SHOULD EITHER BE DONE IN A COMPLETELY DISJOINT SET AS THE
-#PERFORMER INPUT OR IT SHOULD BE DONE ONLY ON THE TRAINING SET FOR THE PERFORMER--
-#OOPS *********************** IDK HOW TO DO THE LATTER THOUGH SO I'LL DO THE FORMER (DO IT 
-# LATER REGINA)
-#********
+#partition the sample population into GWAS and NN input
+#creates a file called population_partitions/gwas_samples.txt and
+#population_partitions/performer_input_samples.txt
+python partition_sample_population.py
+
+#perform GWAS for each phenotype
 ./do_gwas_for_each_phenotype.sh
 ./create_and_combine_filtered_files.sh
 
@@ -47,11 +48,17 @@ fi
 python index_SNPs_each_phenotype/extract_index_SNPs.py
 
 # generate a file of sample IDs to keep -- we'll randomly select this many sample IDs
-# for now
+# to input into the performer
 # creates a file called random_sample_ids.txt
-python generate_sample_IDs_to_keep.py 200000
+python generate_sample_IDs_to_keep.py $NUM_SAMPLES_TO_INPUT_TO_NN
+
+ensure_directory_exists "bgen_files_filtered_by_people_and_variants"
+ensure_directory_exists "vcf_versions_of_files"
 
 for pheno in "${phenotypes[@]}"; do
+
+    ensure_directory_exists "bgen_files_filtered_by_people_and_variants/${pheno}"
+    ensure_directory_exists "vcf_versions_of_files/${pheno}"
 
     #delete all pre-existing filtered bgen files from other runs!
     base_dir="bgen_files_filtered_by_people_and_variants/${pheno}"
@@ -71,7 +78,6 @@ for pheno in "${phenotypes[@]}"; do
     done
 
     #filter bgen files
-    #change from 0 to 1 if you used random SNPs
     ./filter_bgen_files_for_correct_people_and_variants.sh "$pheno"
 
     #note: after this filter, there might be no SNPs from chr 21 or another
@@ -107,4 +113,4 @@ for pheno in "${phenotypes[@]}"; do
 
 done
 
-python create_lmdb_files_each_phenotype.py
+parallel "python create_lmdb_files_each_phenotype.py {} > output_of_parallel_create_lmdb_files_{}.txt 2> error_for_create_lmdb_files_{}.txt" :::: phenotype_names.txt

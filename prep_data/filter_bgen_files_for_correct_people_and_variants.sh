@@ -7,7 +7,7 @@ pheno=$1
 for CHR in {1..22}
 do
   BGEN_FILE="${QC_DIR}/ukb.filtered.imp.chr${CHR}.bgen" 
-  SAMPLE_FILE="${IMPUTE_DIR}/ukb61666_imp_chr${CHR}_v3_s487280.sample"
+  SAMPLE_FILE="${QC_DIR}/ukb.filtered.imp.chr${CHR}.sample"
   
   if [ "${RANDOMLY_SAMPLE_SNPS}" == "true" ]; then
     SNPS_TO_USE_FILE="snps_to_use_as_NN_input.txt"

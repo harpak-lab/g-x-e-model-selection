@@ -1,4 +1,9 @@
+source ../config.sh
+ensure_directory_exists "${GWAS_DIR}"
+
 for pheno in "${phenotypes[@]}"; do
+  ensure_directory_exists "${GWAS_DIR}/${pheno}"
+  
   for CHR in {1..22}; do
 
     BGEN_FILE="${QC_DIR}/ukb.filtered.imp.chr${CHR}.bgen" 
@@ -10,7 +15,7 @@ for pheno in "${phenotypes[@]}"; do
       --memory ${mem} \
       --bgen ${BGEN_FILE} ref-last \
       --sample ${SAMPLE_FILE} \
-      --keep ${GWAS_SAMPLE_FILE} \
+      --keep population_partitions/gwas_samples.txt \
       --glm \
       --make-pgen \
       --covar-variance-standardize \

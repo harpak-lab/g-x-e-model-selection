@@ -2,9 +2,6 @@ import random
 import sys
 import os
 
-imputed_bgen_files_dir = os.getenv('IMPUTE_DIR')
-pheno_dir = os.getenv('PHENO_DIR')
-
 # default number of people to select if no argument is provided
 default_num_people = 400
 
@@ -18,30 +15,20 @@ if len(sys.argv) > 1:
 else:
     num_people_to_randomly_select = default_num_people
 
-# read the Withdrawal List (assuming FID and IID are identical)
-with open('{}/withdrawn_ids.txt'.format(pheno_dir), 'r') as wd_file:
-    # skip the header
-    next(wd_file)
-    # create a set of withdrawn IDs
-    withdrawn_ids = {line.split()[1] for line in wd_file}
-
-# filter out withdrawn individuals
-with open('{}/ukb61666_imp_chr1_v3_s487280.sample'.format(imputed_bgen_files_dir), 'r') as f:
+#added below code****
+with open('population_partitions/performer_input_samples.txt' , 'r') as f:
     lines = f.readlines()
 
-#extract the header
 header = lines[:2]
+valid_sample_ids = lines[2:]
 
-#filter out withdrawn individuals (assuming the first column is the relevant ID)
-filtered_samples = [line for line in lines[2:] if line.split()[0] not in withdrawn_ids]
-
-# Check if there are enough samples to select
-if num_people_to_randomly_select > len(filtered_samples):
-    print(f"Number of people to select ({num_people_to_randomly_select}) is greater than the available samples ({len(filtered_samples)}).")
+#check if there are enough samples to select
+if num_people_to_randomly_select > len(valid_sample_ids):
+    print(f"Number of people to select ({num_people_to_randomly_select}) is greater than the available samples ({len(valid_sample_ids)}).")
     sys.exit(1)
 
 #randomly select samples
-random_samples = random.sample(filtered_samples, num_people_to_randomly_select)
+random_samples = random.sample(valid_sample_ids, num_people_to_randomly_select)
 
 #write to the output file
 with open('random_sample_ids.txt', 'w') as out:
