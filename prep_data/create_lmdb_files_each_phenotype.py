@@ -6,9 +6,9 @@ import joblib
 from sklearn.preprocessing import MinMaxScaler
 from shared_utils import ensure_directory_exists
 import sys
-
-#debugging
 import os
+import shutil
+
 print("current working")
 print(os.getcwd())
 
@@ -44,7 +44,6 @@ sampled_phenotype_data = phenotype_data[phenotype_data['IID'].isin(sampled_indiv
 sampled_context_data = context_data[context_data['IID'].isin(sampled_individuals['ID_2'])]
         
 #convert the vcf to a form that the NN will accept
-#this ignores the positions of all the SNPs though?? is this ok??****
 vcf_file = 'vcf_versions_of_files/{}/vcf_version_all_chromosomes.vcf'.format(pheno_name)
 
 #parse and one-hot encode genotype data
@@ -127,12 +126,11 @@ print("Missing in covariates data:", missing_in_covariates)
 sampled_phenotype_data = sampled_phenotype_data.dropna(subset=[pheno_name])
 sampled_phenotype_data['FID'] = sampled_phenotype_data['FID'].astype(int)
 sampled_phenotype_data['IID'] = sampled_phenotype_data['IID'].astype(int)
-sampled_phenotype_data[pheno_name] = sampled_phenotype_data[pheno_name].astype(float) #maybe change later
-sampled_phenotype_data = sampled_phenotype_data[sampled_phenotype_data[pheno_name] > 0] #maybe change if you add other phenotypes********
+sampled_phenotype_data[pheno_name] = sampled_phenotype_data[pheno_name].astype(float)
+sampled_phenotype_data = sampled_phenotype_data[sampled_phenotype_data[pheno_name] > 0]
 sampled_context_data = sampled_context_data[sampled_context_data['IID'].isin(sampled_phenotype_data['IID'])]
 valid_indices = sampled_phenotype_data.index
 genotype_array = genotype_array[valid_indices]
-#do i need to drop the invalid values/convert the IID to int from the context data too?? i don't think so
 
 print()
 print("sampled phenotype data after reordering and filtering:")
@@ -157,7 +155,7 @@ np.save('../dataset/{}_invalid_vals_dropped_genotype_array.npy'.format(pheno_nam
 sampled_phenotype_data = sampled_phenotype_data.drop(columns=['FID', 'IID'])
 sampled_context_data = sampled_context_data.drop(columns=['FID', 'IID'])
 
-#normalize the phenotype data *****change the scaler later if you want!!!!
+#normalize the phenotype data ***change the scaler later if you wantå
 scaler = MinMaxScaler()
 scaler.fit(sampled_phenotype_data)
 normalized_phenotype_data = pd.DataFrame(scaler.transform(sampled_phenotype_data), columns=sampled_phenotype_data.columns)
@@ -166,8 +164,7 @@ joblib.dump(scaler, '{}_phenotype_scaler.joblib'.format(pheno_name))
 phenotype_array = normalized_phenotype_data.to_numpy()
 context_array = sampled_context_data.to_numpy()
 
-#prep data to be stored in a format that we can use TorchDataset on. if this all doesn't work
-#then just create your own custom dataset class****
+#prep data to be stored in a format that we can use TorchDataset on
 data = {
     'input_genome': genotype_array,
     'target': phenotype_array,
@@ -184,18 +181,28 @@ print("data['input_genome'].shape:", data['input_genome'].shape)
 print("data[target].shape:", data['target'].shape)
 print("data[contexts].shape:", data['contexts'].shape)
 
-#save as lmdb
+#save as LMDB
 lmdb_path = '../dataset/genome_{}_phenotype_context_data.lmdb'.format(pheno_name)
 
-total_size_in_bytes = (data['input_genome'].nbytes + 
-                    data['target'].nbytes + 
-                    data['contexts'].nbytes)
+#delete the directory if it already exists
+if os.path.exists(lmdb_path):
+    shutil.rmtree(lmdb_path)
+    print(f"Deleted existing LMDB directory: {lmdb_path}")
+else:
+    print(f"No LMDB directory found at: {lmdb_path}")
 
-buffer_percentage = 0.10  #or 0.20 for a 20% buffer
+total_size_in_bytes = (data['input_genome'].nbytes + 
+                       data['target'].nbytes + 
+                       data['contexts'].nbytes)
+
+buffer_percentage = 1 # 100% buffer
 total_size_with_buffer = total_size_in_bytes * (1 + buffer_percentage)
 
-print("total size with buffer:", total_size_with_buffer)
+#convert total size with buffer from bytes to megabytes
+total_size_with_buffer_mb = total_size_with_buffer / (2**20)
 
-lmdb_writer = pxp.Writer(lmdb_path, int(math.ceil(total_size_with_buffer))) #increase size later if needed*****
+print("total size with buffer (MB):", total_size_with_buffer_mb)
+
+lmdb_writer = pxp.Writer(lmdb_path, int(math.ceil(total_size_with_buffer_mb)), ram_gb_limit=14) # Increase size later if needed
 lmdb_writer.put_samples(data)
 lmdb_writer.close()

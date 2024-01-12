@@ -15,7 +15,6 @@ if len(sys.argv) > 1:
 else:
     num_people_to_randomly_select = default_num_people
 
-#added below code****
 with open('population_partitions/performer_input_samples.txt' , 'r') as f:
     lines = f.readlines()
 

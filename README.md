@@ -1,8 +1,6 @@
 # Performer Model for Phenotype Prediction
 Regina Ye
 
-*****means come back here Regina
-
 Instructions for scripts.
 # Gene-Environment Interaction Analysis with Performer Neural Networks
 
@@ -33,13 +31,13 @@ After creating the environment, activate it using `conda activate GxE_predict_ph
 You will also need to manually install ([cat-bgen](https://enkre.net/cgi-bin/code/bgen/dir?ci=trunk)), ([plink](https://www.cog-genomics.org/plink/)), and ([plink2](https://www.cog-genomics.org/plink/2.0/)).
 
 ## Phenotype files
-Phenotype files are obtained from the UK Biobank and renamed pheno_(phenotype code).txt.*******
+Phenotype files are obtained from the UK Biobank and renamed pheno_(phenotype code).txt.
 
 ## Genotype files
 Imputed data for the UK Biobank was downloaded using the ([ukbgene utility](https://biobank.ctsu.ox.ac.uk/crystal/refer.cgi?id=664)) in the Oxford bgen format.
 
 ## Context (Environment) files
-Context files are obtained from the UK Biobank and renamed wc.covariates.txt******
+Context files are obtained from the UK Biobank and renamed wc.covariates.txt
 
 ## Data Preprocessing
 
@@ -102,7 +100,3 @@ python main.py \
 This project is based on the work of ([Måløy et al.] (https://github.com/haakom/pay-attention-to-genomic-selection)) Please refer to their repository for the original implementation.
 Parts of the project use code written by ([Phil Wang] (https://github.com/lucidrains/nystrom-attention)).
 Parts of this README and the QC.sh file are taken from ([Zhu et al.'s] (https://github.com/harpak-lab/amplification_gxsex) )work.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.

@@ -5,7 +5,7 @@ import optuna
 
 def prepare_study(ttargs):
 
-    #added below two lines*****
+    #added below two lines
     h_search_study_name = ''
     study_name = ''
         
@@ -36,7 +36,7 @@ def prepare_study(ttargs):
     #         study_name += "performer_"
     #     h_search_study_name += "historical_transformer_hyperparameter_search_large"
     #     study_name += "historical_transformer_"
-    # elif ttargs.network == 5: #I WANT TO DELETE THIS BUT WHY IS IT IN AN ELIF CONNECTED TO THE DROPOUT_INPUT THING*****
+    # elif ttargs.network == 5:
     #     h_search_study_name += "historical_pureTransformer_hyperparameter_search_large"
     #     if ttargs.separate_embedding == 1:
     #         study_name += "separate_embedding_"
